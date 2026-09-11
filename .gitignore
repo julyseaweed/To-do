@@ -1,0 +1,24 @@
+artifacts/
+release/
+test-results/
+UserData/
+**/UserData/
+local-data/
+backups/
+*.log
+*.user
+settings.json
+error.log
+当前.md
+*.last-good.md
+
+# Machine-specific files and credentials
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12
+*.lnk
+Thumbs.db
+.DS_Store
