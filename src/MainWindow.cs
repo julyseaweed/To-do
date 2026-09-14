@@ -398,7 +398,6 @@ namespace Shike {
             var content = ItemTextPanel();
             var title = TextField(item.Title, 15.5, ink, TextFieldRole.Body, true);
             var titleButton = TextFieldAction(title, "Edit " + itemLabel, delegate { Edit(item, item.Group); });
-            AlignItemCheck(check, title, content, row);
             content.Children.Add(titleButton);
             if (watching) {
                 content.Children.Add(Theme.CardDivider());

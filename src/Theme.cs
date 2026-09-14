@@ -177,9 +177,19 @@ namespace Shike {
    </Grid>
   </ControlTemplate></Setter.Value></Setter>
  </Style>
+ <Style x:Key='ScrollTrackPageButton' TargetType='RepeatButton'>
+  <Setter Property='Focusable' Value='False'/><Setter Property='IsTabStop' Value='False'/>
+  <Setter Property='Template'><Setter.Value><ControlTemplate TargetType='RepeatButton'><Border Background='Transparent'/></ControlTemplate></Setter.Value></Setter>
+ </Style>
  <Style x:Key='SlimHorizontalScrollBar' TargetType='ScrollBar'>
-  <Setter Property='Height' Value='5'/><Setter Property='MinHeight' Value='0'/><Setter Property='MaxHeight' Value='5'/><Setter Property='Background' Value='Transparent'/>
-  <Setter Property='Template'><Setter.Value><ControlTemplate TargetType='ScrollBar'><Track x:Name='PART_Track' Orientation='Horizontal' IsDirectionReversed='False'><Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType='Thumb'><Border CornerRadius='2' Background='{DynamicResource Ring}' Opacity='0.45' Margin='2,1'/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb></Track></ControlTemplate></Setter.Value></Setter>
+  <Setter Property='Height' Value='12'/><Setter Property='MinHeight' Value='0'/><Setter Property='MaxHeight' Value='12'/><Setter Property='Background' Value='Transparent'/>
+  <Setter Property='Template'><Setter.Value><ControlTemplate TargetType='ScrollBar'>
+   <Track x:Name='PART_Track' Orientation='Horizontal' IsDirectionReversed='False'>
+    <Track.DecreaseRepeatButton><RepeatButton Command='{x:Static ScrollBar.PageLeftCommand}' Style='{StaticResource ScrollTrackPageButton}'/></Track.DecreaseRepeatButton>
+    <Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType='Thumb'><Grid Background='Transparent'><Border Height='3' CornerRadius='1.5' Background='{DynamicResource Ring}' Opacity='0.45' Margin='2,0' VerticalAlignment='Center'/></Grid></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+    <Track.IncreaseRepeatButton><RepeatButton Command='{x:Static ScrollBar.PageRightCommand}' Style='{StaticResource ScrollTrackPageButton}'/></Track.IncreaseRepeatButton>
+   </Track>
+  </ControlTemplate></Setter.Value></Setter>
  </Style>
  <Style x:Key='TopicStripScrollViewer' TargetType='ScrollViewer'>
   <Setter Property='Template'><Setter.Value><ControlTemplate TargetType='ScrollViewer'>

@@ -179,7 +179,6 @@ namespace Shike {
             grid.Children.Add(check);
             var text = ItemTextPanel();
             var title = InlineInput(draft, false, 15.5, ink, "Item text");
-            AlignItemCheck(check, title, text, grid);
             title.TextChanged += delegate { updateCheckName(); };
             text.Children.Add(title);
             if (draft.ShowLink || watching) {

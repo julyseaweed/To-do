@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace Shike {
     public sealed partial class MainWindow {
@@ -90,36 +89,6 @@ namespace Shike {
 
         static StackPanel ItemTextPanel() {
             return new StackPanel { Margin = new Thickness(2, 6, 0, 6), VerticalAlignment = VerticalAlignment.Center };
-        }
-
-        static void AlignItemCheck(CheckBox check, TextBox title, FrameworkElement textPanel, Grid row) {
-            check.VerticalAlignment = VerticalAlignment.Top;
-            var offset = new TranslateTransform(); check.RenderTransform = offset;
-            bool pending = false;
-            Action align = delegate {
-                if (title.ActualHeight <= 0 || check.ActualHeight <= 0 || !title.IsArrangeValid) return;
-                Rect line = title.GetRectFromCharacterIndex(0);
-                if (line.IsEmpty) return;
-                double center = title.TranslatePoint(new Point(0, line.Top + line.Height / 2), row).Y;
-                double top = center - check.ActualHeight / 2;
-                // Moving only the checkbox keeps the card's measured geometry
-                // unchanged and avoids rounding negative margins on wrapped rows.
-                if (Math.Abs(offset.Y - top) > .01) offset.Y = top;
-            };
-            Action schedule = delegate {
-                // An arranged text view already has its first line. The queued
-                // pass also covers initial template creation and parent moves.
-                align();
-                if (pending) return;
-                pending = true;
-                title.Dispatcher.BeginInvoke(new Action(delegate { pending = false; align(); }), DispatcherPriority.Loaded);
-            };
-            title.Loaded += delegate { schedule(); };
-            title.SizeChanged += delegate { schedule(); };
-            title.TextChanged += delegate { schedule(); };
-            textPanel.SizeChanged += delegate { schedule(); };
-            row.SizeChanged += delegate { schedule(); };
-            check.SizeChanged += delegate { schedule(); };
         }
     }
 }

@@ -90,6 +90,22 @@ class BodyTypographyTests {
     static object Member(string name) {return typeof(MainWindow).GetField(name,Private).GetValue(window);}
     static object Invoke(string name,params object[] values) {return typeof(MainWindow).GetMethod(name,Private).Invoke(window,values);}
     static Rect InRoot(FrameworkElement element,FrameworkElement root) {return element.TransformToAncestor(root).TransformBounds(new Rect(0,0,element.ActualWidth,element.ActualHeight));}
+    static FrameworkElement ItemCard(DependencyObject child) {
+        for(var current=child;current!=null;current=VisualTreeHelper.GetParent(current)) {
+            var card=current as Border;
+            if(card!=null && card.Background is LinearGradientBrush)return card;
+        }
+        throw new Exception("Cannot locate the completion circle's card.");
+    }
+    static double CheckCardCircle(CheckBox checkbox,FrameworkElement root,double zoom,string name) {
+        var ring=(FrameworkElement)checkbox.Template.FindName("RingShape",checkbox);
+        Rect bounds=InRoot(ring,root),card=InRoot(ItemCard(checkbox),root);
+        double center=bounds.Top+bounds.Height/2,target=card.Top+card.Height/2;
+        // Grid snaps an odd-height row to the nearest logical pixel before
+        // the topic pane's zoom transform, leaving at most half a pixel offset.
+        Check(Math.Abs(center-target)<=.5*zoom+.01,name+" circle centered on card (delta "+N(center-target)+" DIP)");
+        return center;
+    }
     static void ItemAlignment(NoteStore store) {
         foreach(string timer in new[]{"watcher","contrastTimer"})((DispatcherTimer)Member(timer)).Stop();
         var root=(FrameworkElement)window.Content;window.Content=null;root.Resources=Theme.Resources();
@@ -100,26 +116,40 @@ class BodyTypographyTests {
             root.Dispatcher.Invoke(new Action(delegate{}),DispatcherPriority.ApplicationIdle);
             root.Measure(new Size(900,640));root.Arrange(new Rect(0,0,900,640));root.UpdateLayout();
         };
-        var samples=new[]{new Entry {Title="",Link=""},new Entry {Title="关于",Link="https://example.test"},new Entry {Title="Project notes",Link="https://example.test/reading-notes/a/long/reference/path"},new Entry {Title="关于阅读计划与所有重要参考资料以及本周要完成的任务",Link="https://example.test"},new Entry {Title="关于",Link="https://example.test",Note="A supporting note that wraps into additional lines without moving the title's checkbox"}};
+        var samples=new[]{new Entry {Title="",Link=""},new Entry {Title="关于",Link="https://example.test"},new Entry {Title="Project notes",Link="https://example.test/reading-notes/a/long/reference/path"},new Entry {Title="关于阅读计划与所有重要参考资料以及本周要完成的任务",Link="https://example.test"},new Entry {Title="关于",Link="https://example.test",Note="A supporting note that wraps into additional lines and increases the card height"}};
         foreach(string group in new[]{"Plans",NoteStore.ReadingGroup})foreach(double dpi in new[]{1.0,1.25,1.5,2.0})foreach(double zoom in new[]{.8,1.0,1.5})for(int index=0;index<samples.Length;index++) {
             var settings=(Settings)Member("config");settings.Zoom=zoom;Invoke("ApplyZoom");VisualTreeHelper.SetRootDpi(root,new DpiScale(dpi,dpi));
             var sample=samples[index];sample.Group=group;
             File.WriteAllText(store.CurrentPath,"# Test\n\n## "+group+"\n"+NoteDocument.Serialize(sample,"\n")+"\n",new System.Text.UTF8Encoding(false));window.Refresh();layout();
             Rect before=Rect.Empty; double originalCircle=0;
             for(int phase=0;phase<2;phase++) {
-                var checkbox=Children(root).OfType<CheckBox>().First();var ring=(FrameworkElement)checkbox.Template.FindName("RingShape",checkbox);
+                var checkbox=Children(root).OfType<CheckBox>().First();
                 TextBox title;
                 if(phase==0)title=Children(root).OfType<Button>().Where(x=>AutomationProperties.GetName(x).StartsWith("Edit ")&&!AutomationProperties.GetName(x).StartsWith("Edit link ")).SelectMany(Children).OfType<TextBox>().First();
                 else {object draft=Member("inline");title=(TextBox)draft.GetType().GetField("Input").GetValue(draft);}
-                Rect caret=title.GetRectFromCharacterIndex(0);Check(!caret.IsEmpty,group+" first line is available, sample"+index+" phase"+phase);
-                double target=title.TransformToAncestor(root).Transform(new Point(0,caret.Top+caret.Height/2)).Y;
-                Rect bounds=InRoot(ring,root);double center=bounds.Top+bounds.Height/2;
                 string name=group+" sample"+index+" dpi"+N(dpi*100)+" zoom"+N(zoom)+" phase"+phase;
-                Check(Math.Abs(center-target)*dpi<=.8,name+" circle aligns to first title line (delta "+N(center-target)+" DIP)");
-                FrameworkElement card=title;
-                while(!(card is Border && ((Border)card).Background is LinearGradientBrush))card=(FrameworkElement)VisualTreeHelper.GetParent(card);
+                var card=ItemCard(title);
+                double center=CheckCardCircle(checkbox,root,zoom,name);
                 if(phase==0){before=InRoot(card,root);originalCircle=center;var entry=((NoteDocument)Member("document")).Entries.First();window.Edit(entry,entry.Group);layout();}
-                else {Check(InRoot(card,root)==before && Math.Abs(center-originalCircle)*dpi<=.8,name+" editing preserves card and circle bounds");Invoke("FinishInline",false);layout();}
+                else {
+                    Check(InRoot(card,root)==before && Math.Abs(center-originalCircle)*dpi<=.8,name+" editing preserves card and circle bounds");
+                    if(index==0) {
+                        title.Text=string.Concat(Enumerable.Repeat("内容换行 example ",12));layout();
+                        Check(InRoot(card,root).Height>before.Height+10,name+" typing grows the card into multiple lines");
+                        CheckCardCircle(checkbox,root,zoom,name+" live wrapped title");
+                        object draft=Member("inline");var link=(TextBox)draft.GetType().GetField("LinkInput").GetValue(draft);
+                        if(link!=null) {
+                            link.Text="https://example.test/"+string.Concat(Enumerable.Repeat("reading-notes/",20));layout();
+                            CheckCardCircle(checkbox,root,zoom,name+" live wrapped link");
+                            link.Text="";
+                        }
+                        title.Text="";layout();
+                        CheckCardCircle(checkbox,root,zoom,name+" cleared text");
+                        Check(Math.Abs(InRoot(card,root).Height-before.Height)*dpi<=.8,name+" clearing text restores the empty card height");
+                    }
+                    Invoke("FinishInline",false);layout();
+                    CheckCardCircle(Children(root).OfType<CheckBox>().First(),root,zoom,name+" saved");
+                }
             }
         }
     }
