@@ -387,9 +387,10 @@ namespace Shike {
             Brush ink = Theme.CardForeground(colorIndex), muted = Theme.CardSecondary(colorIndex);
             bool blank = string.IsNullOrWhiteSpace(item.Title) && string.IsNullOrWhiteSpace(item.Link) && string.IsNullOrWhiteSpace(item.Note);
             string itemLabel = blank ? "empty item " + (rowIndex + 1) + " in " + GroupLabel(item.Group) : !string.IsNullOrWhiteSpace(item.Title) ? item.Title : !string.IsNullOrWhiteSpace(item.Link) ? item.Link : item.Note;
-            var row = new Grid { MinHeight = watching ? 74 : 44, Background = Brushes.Transparent, Margin = new Thickness(7, 0, 5, 0) };
+            bool hasLink = !string.IsNullOrWhiteSpace(item.Link);
+            var row = new Grid { MinHeight = watching ? 74 : 44, Background = Brushes.Transparent, Margin = new Thickness(7, 0, hasLink ? 5 : 12, 0) };
             row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(30) });
-            row.ColumnDefinitions.Add(new ColumnDefinition()); row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(27) });
+            row.ColumnDefinitions.Add(new ColumnDefinition()); row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(hasLink ? 27 : 0) });
             var check = new CheckBox { IsChecked = item.Done };
             AutomationProperties.SetName(check, (blank ? "Remove " : item.Done ? "Restore " : "Complete ") + itemLabel);
             RoutedEventHandler toggle = delegate { if (blank) { Change(item, null, item.Group, "Deleted"); return; } var changed = Copy(item); changed.Done = check.IsChecked == true; Change(item, changed, item.Group, changed.Done ? "Completed" : "Restored"); };
@@ -406,12 +407,14 @@ namespace Shike {
             }
             if (!string.IsNullOrWhiteSpace(item.Note)) { var hint = Theme.Text(item.Note, 11, muted); hint.TextWrapping = TextWrapping.Wrap; hint.Margin = new Thickness(0, 4, 0, 0); content.Children.Add(hint); }
             Grid.SetColumn(content, 1); row.Children.Add(content);
-            var action = string.IsNullOrWhiteSpace(item.Link) ? Theme.Icon("\uE70F", "Edit " + itemLabel, delegate { Edit(item, item.Group); }) : Theme.Icon("\uE8A7", "Open " + itemLabel, delegate { Open(item.Link); });
-            Theme.PlainTextAction(action); action.Cursor = string.IsNullOrWhiteSpace(item.Link) ? Cursors.IBeam : Cursors.Hand;
-            action.Width = 27; action.MinWidth = 27; action.FontSize = 11; action.Padding = new Thickness(4); action.Opacity = string.IsNullOrWhiteSpace(item.Link) ? 0 : 0.55;
-            Grid.SetColumn(action, 2); row.Children.Add(action);
-            row.MouseEnter += delegate { action.Opacity = 0.9; }; row.MouseLeave += delegate { action.Opacity = string.IsNullOrWhiteSpace(item.Link) ? 0 : 0.55; };
-            action.GotKeyboardFocus += delegate { action.Opacity = 1; };
+            if (hasLink) {
+                var action = Theme.Icon("\uE8A7", "Open " + itemLabel, delegate { Open(item.Link); });
+                Theme.PlainTextAction(action); action.Cursor = Cursors.Hand;
+                action.Width = 27; action.MinWidth = 27; action.FontSize = 11; action.Padding = new Thickness(4); action.Opacity = 0.55;
+                Grid.SetColumn(action, 2); row.Children.Add(action);
+                row.MouseEnter += delegate { action.Opacity = 0.9; }; row.MouseLeave += delegate { action.Opacity = 0.55; };
+                action.GotKeyboardFocus += delegate { action.Opacity = 1; };
+            }
             var context = new ContextMenu();
             AddMenu(context, "Edit", delegate { Edit(item, item.Group); });
             AddMenu(context, string.IsNullOrWhiteSpace(item.Link) ? "Add link" : "Edit link", delegate { EditLink(item); });

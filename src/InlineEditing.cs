@@ -160,9 +160,15 @@ namespace Shike {
         FrameworkElement InlineItem(InlineDraft draft, int colorIndex, int rowIndex) {
             bool watching = draft.Group == NoteStore.ReadingGroup;
             Brush ink = Theme.CardForeground(colorIndex), muted = Theme.CardSecondary(colorIndex);
-            var grid = new Grid { MinHeight = watching ? 74 : 44, Margin = new Thickness(7, 0, 5, 0) };
+            var grid = new Grid { MinHeight = watching ? 74 : 44 };
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(30) }); grid.ColumnDefinitions.Add(new ColumnDefinition());
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(27) });
+            var actionColumn = new ColumnDefinition(); grid.ColumnDefinitions.Add(actionColumn);
+            Action updateLinkLayout = delegate {
+                bool hasLink = !string.IsNullOrWhiteSpace(draft.Link);
+                grid.Margin = new Thickness(7, 0, hasLink ? 5 : 12, 0);
+                actionColumn.Width = new GridLength(hasLink ? 27 : 0);
+            };
+            updateLinkLayout();
             var check = new CheckBox { IsChecked = draft.Original != null && draft.Original.Done };
             Action updateCheckName = delegate {
                 bool empty = string.IsNullOrWhiteSpace(draft.Text) && string.IsNullOrWhiteSpace(draft.Link) && (draft.Original == null || string.IsNullOrWhiteSpace(draft.Original.Note));
@@ -184,7 +190,7 @@ namespace Shike {
             if (draft.ShowLink || watching) {
                 if (watching) text.Children.Add(Theme.CardDivider());
                 var link = InlineInput(draft, true, 11.5, ink, "Item link"); link.Margin = watching ? new Thickness(0) : new Thickness(0, 5, 0, 1);
-                link.TextChanged += delegate { updateCheckName(); };
+                link.TextChanged += delegate { updateCheckName(); updateLinkLayout(); };
                 text.Children.Add(link);
             }
             if (draft.Original != null && !string.IsNullOrWhiteSpace(draft.Original.Note)) {
