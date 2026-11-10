@@ -1,8 +1,8 @@
 :root {
-  color-scheme:dark;
-  font:14.5px/1.33 'Segoe UI','Microsoft YaHei UI',system-ui,sans-serif;
-  color:#f7f8fa;
-  --watch-width:250px;
+  color-scheme:light;
+  font:12.5px/1.33 'Segoe UI','Microsoft YaHei UI',system-ui,sans-serif;
+  color:#302d25;
+  --watch-width:144px;
   --glass:.55
 }
 * {
@@ -19,7 +19,7 @@ html,body {
   background:transparent
 }
 body {
-  padding:12px
+  padding:6px
 }
 button,input,textarea {
   font:inherit;
@@ -40,13 +40,13 @@ button:focus-visible,a:focus-visible,.card:focus-visible,.divider:focus-visible 
   flex-direction:column;
   width:100%;
   height:100%;
-  min-width:300px;
+  min-width:280px;
   min-height:200px;
   border:1px solid #ffffff65;
   border-radius:12px;
-  background:linear-gradient(160deg,rgb(34 37 44 / var(--glass)),rgb(20 22 28 / var(--glass)));
+  background:linear-gradient(145deg,rgb(255 255 255 / calc(var(--glass) * .32)),rgb(255 255 255 / calc(var(--glass) * .12)));
   backdrop-filter:blur(24px);
-  box-shadow:0 8px 24px #0003;
+  box-shadow:0 5px 18px #49390f12, inset 0 1px 0 #ffffff55;
   overflow:hidden
 }
 header {
@@ -54,16 +54,16 @@ header {
   align-items:center;
   justify-content:space-between;
   flex:none;
-  padding:10px 18px 8px;
+  padding:7px 12px 5px;
   cursor:move;
   touch-action:none;
   user-select:none
 }
 h1 {
-  font-size:24px;
+  font-size:19px;
   font-weight:700;
   margin:0;
-  transform:translateY(5px);
+  transform:translateY(2px);
   letter-spacing:-.025em
 }
 .tools {
@@ -72,8 +72,8 @@ h1 {
   gap:4px
 }
 .tools button {
-  width:30px;
-  height:30px;
+  width:24px;
+  height:24px;
   padding:0;
   display:grid;
   place-items:center
@@ -93,7 +93,7 @@ h1 {
   display:flex;
   flex:1;
   min-height:0;
-  margin:6px 18px 0
+  margin:4px 10px 0
 }
 .column {
   display:flex;
@@ -104,7 +104,7 @@ h1 {
   flex:0 0 min(var(--watch-width),45%)
 }
 .divider {
-  flex:0 0 26px;
+  flex:0 0 16px;
   position:relative;
   cursor:col-resize;
   touch-action:none
@@ -112,30 +112,30 @@ h1 {
 .divider:after {
   content:'';
   position:absolute;
-  left:12px;
+  left:7px;
   top:5px;
   bottom:3px;
   width:1px;
-  background:linear-gradient(transparent,#ffffff30 12%,#ffffff30 88%,transparent)
+  background:linear-gradient(transparent,#50472c26 12%,#50472c26 88%,transparent)
 }
 .topics {
   display:flex;
-  gap:18px;
+  gap:10px;
   flex:1;
   min-width:0;
   overflow-x:auto;
   overscroll-behavior-x:contain;
   scrollbar-width:thin;
-  scrollbar-color:#e2e5ed70 transparent
+  scrollbar-color:#50472c66 transparent
 }
 .topics .column {
-  flex:0 0 clamp(190px,calc((100% - 18px)/2),270px)
+  flex:0 0 132px
 }
 .column-head {
   display:flex;
   align-items:center;
   gap:8px;
-  padding:4px 7px 10px
+  padding:3px 4px 7px
 }
 .column-head input {
   min-width:0;
@@ -144,17 +144,17 @@ h1 {
   border:0;
   background:transparent;
   outline:0;
-  font-size:19px;
+  font-size:14.5px;
   font-weight:700;
   line-height:1.33
 }
 .add {
-  width:30px;
-  height:30px;
+  width:24px;
+  height:24px;
   flex:none;
-  border:1px solid #ffffff20;
+  border:1px solid #50472c22;
   border-radius:12px;
-  font-size:20px;
+  font-size:17px;
   font-weight:300;
   padding:0
 }
@@ -164,15 +164,15 @@ h1 {
   overflow-y:auto;
   overflow-x:hidden;
   scrollbar-width:thin;
-  scrollbar-color:#e2e5ed70 transparent;
+  scrollbar-color:#50472c66 transparent;
   padding-bottom:4px
 }
  .card {
   display:grid;
-  grid-template-columns:30px minmax(0,1fr) auto;
+  grid-template-columns:23px minmax(0,1fr) auto;
   align-items:center;
-  min-height:44px;
-  padding:6px 12px 6px 7px;
+  min-height:36px;
+  padding:5px 9px 5px 5px;
   border:0;
   border-radius:24px;
   margin-bottom:6px;
@@ -181,7 +181,7 @@ h1 {
   position:relative
 }
 .watching .card {
-  min-height:74px
+  min-height:60px
 }
 .card-content {
   min-width:0
@@ -189,7 +189,7 @@ h1 {
 .card textarea {
   display:block;
   width:100%;
-  min-height:20px;
+  min-height:17px;
   resize:none;
   overflow:hidden;
   field-sizing:content;
@@ -204,9 +204,9 @@ h1 {
   cursor:text
 }
 .card .url {
-  font-size:11.5px;
+  font-size:10.5px;
   line-height:1.33;
-  min-height:16px
+  min-height:14px
 }
 .watching .url {
   border-top:1px solid #fff0f02a;
@@ -216,8 +216,8 @@ h1 {
 .done {
   align-self:center;
   justify-self:center;
-  width:16px;
-  height:16px;
+  width:14px;
+  height:14px;
   border:1px solid currentColor;
   border-radius:50%;
   padding:0;
@@ -262,11 +262,11 @@ h1 {
 }
  footer {
   flex:none;
-  padding:9px 18px;
+  padding:7px 10px;
   display:flex;
   align-items:center;
   gap:12px;
-  padding-left:calc(min(var(--watch-width),45%) + 44px)
+  padding-left:calc(min(var(--watch-width),45%) + 26px)
 }
 #new-topic {
   padding:6px 13px;
@@ -282,8 +282,8 @@ h1 {
   display:flex;
   align-items:center;
   gap:14px;
-  background:#25272dee;
-  padding:8px 12px;
+  background:#fff9e9ed;
+  padding:6px 12px;
   border-radius:6px;
   font-size:12px;
   z-index:3
@@ -298,8 +298,8 @@ h1 {
   position:absolute;
   right:16px;
   top:48px;
-  background:#25272df5;
-  border:1px solid #ffffff20;
+  background:#fff9e9f5;
+  border:1px solid #50472c22;
   border-radius:6px;
   padding:16px;
   z-index:4;
@@ -321,7 +321,7 @@ h1 {
   height:56px;
   border:1px solid #ffffff65;
   border-radius:50%;
-  background:#25272d99;
+  background:#ffffff40;
   backdrop-filter:blur(20px);
   display:grid;
   place-items:center;
@@ -340,13 +340,13 @@ h1 {
   top:-7px;
   width:20px;
   height:20px;
-  background:#25272d;
+  background:#fff9e9;
   border-radius:50%;
   display:grid;
   place-items:center;
   line-height:1;
   padding:0;
-  color:#f7f8fa
+  color:#302d25
 }
 .resize {
   position:absolute;
@@ -377,30 +377,30 @@ h1 {
 }
  @media(max-width:520px) {
   :root {
-    --watch-width:180px
+    --watch-width:138px
   }
   body {
-    padding:8px
+    padding:6px
   }
   header {
-    padding-inline:12px
+    padding-inline:10px
   }
   #board {
-    margin-inline:12px
+    margin-inline:10px
   }
   .divider {
-    flex-basis:18px
+    flex-basis:16px
   }
   .divider:after {
     left:8px
   }
   footer {
-    padding-left:calc(min(var(--watch-width),45%) + 30px)
+    padding-left:calc(min(var(--watch-width),45%) + 26px)
   }
   .topics {
     gap:12px
   }
   .column-head input {
-    font-size:17px
+    font-size:14.5px
   }
 }

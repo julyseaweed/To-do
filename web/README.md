@@ -7,3 +7,5 @@ The Windows application in `src/` remains the reference for the interface and li
 Run `node web/check-parity.mjs` from the repository root to check colors, gradient behavior, empty initialization, and the shared icon against the native source. For a Site update, copy `todo.html`, `todo.css`, `todo.js`, and `todo-icon.png` together, then verify their SHA-256 values before publishing.
 
 Platform differences: browser code is JavaScript/CSS, native code is C#/WPF. Browser storage is localStorage; Windows storage is local Markdown. Browser glass blurs page content, not other applications. Moving/scaling/collapsing operates inside the page or iframe. Windows startup, tray integration, desktop pinning and cross-application window ordering require the native app and are absent from the browser menu. Data is not synchronized between these runtimes.
+
+The embedded browser view uses a compact layout and clear, lightly tinted glass so the host page background shows through. This surface treatment and density are intentionally adapted for the website; the Windows app retains its desktop styling.

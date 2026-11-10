@@ -297,13 +297,23 @@ document.querySelector('#expand').addEventListener('click', () => {
   placePanel(position.left,position.top);
   collapseButton.focus();
 });
-let preferences={transparency:45,watchingWidth:250};
-try { Object.assign(preferences,JSON.parse(localStorage.getItem(storageKey+'.settings'))||{}); } catch {}
+let preferences={transparency:45,watchingWidth:144,layoutVersion:2};
+try {
+  const stored=JSON.parse(localStorage.getItem(storageKey+'.settings'));
+  if(stored){
+    Object.assign(preferences,stored);
+    if(stored.layoutVersion!==2){
+      preferences.watchingWidth=144; preferences.layoutVersion=2;
+      delete preferences.geometry; delete preferences.position;
+      savePreferences();
+    }
+  }
+} catch {}
 function savePreferences(){try{localStorage.setItem(storageKey+'.settings',JSON.stringify(preferences));}catch{}}
 function applyPreferences(){
   preferences.transparency=Math.max(35,Math.min(95,Number(preferences.transparency)||45));
   document.documentElement.style.setProperty('--glass',1-preferences.transparency/100);
-  document.documentElement.style.setProperty('--watch-width',Math.max(120,Number(preferences.watchingWidth)||250)+'px');
+  document.documentElement.style.setProperty('--watch-width',Math.max(120,Number(preferences.watchingWidth)||144)+'px');
   document.querySelector('#transparency').value=preferences.transparency;
   document.querySelector('#transparency-value').textContent=preferences.transparency+'%';
 }
