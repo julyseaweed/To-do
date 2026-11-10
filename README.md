@@ -112,3 +112,9 @@ You can also open this repository in Codex and use this prompt:
 > Build and install To-do from this repository on my Windows computer. Use a dedicated writable folder, create a desktop shortcut, and keep login startup optional. Preserve existing lists and do not upload any personal data.
 >
 > 请从当前仓库在我的 Windows 电脑上构建并安装 To-do，使用独立可写目录，创建桌面快捷方式，开机启动由我选择。保留已有清单，不上传任何个人数据。
+
+## Browser version / 网页版
+
+The browser implementation is in [web/](web/README.md). Its files are also used by the portfolio Site. Colors and list interactions follow the Windows application; browser-specific platform limits are documented there.
+
+网页实现位于 [web/](web/README.md)，网站使用同一份文件。配色和清单操作以 Windows 版为准；浏览器的系统功能限制见该目录说明。
