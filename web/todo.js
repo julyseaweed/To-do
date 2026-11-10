@@ -3,7 +3,19 @@ const panel = document.querySelector('#window');
 const status = document.querySelector('#status');
 const undoButton = document.querySelector('#undo');
 const restoreButton = document.querySelector('#restore');
-const storageKey = 'gao-kexin.todo-demo.v1';
+const storageKey = 'todo.browser.v1';
+// Migrate earlier embedded demos without embedding a site owner's identity.
+try {
+  const legacyKey=Object.keys(localStorage).find(key=>key.endsWith('.todo-demo.v1'));
+  if(legacyKey){
+    for(const suffix of ['', '.settings']){
+      if(!localStorage.getItem(storageKey+suffix)){
+        const existing=localStorage.getItem(legacyKey+suffix);
+        if(existing) localStorage.setItem(storageKey+suffix,existing);
+      }
+    }
+  }
+} catch {}
 const palette = [
   ['#800020','#B33A53'], ['#EB7900','#FFCC91'], ['#E0C000','#FFED96'],
   ['#10AB48','#94E1AB'], ['#00ABB8','#8CE5EA'], ['#3885E8','#AACBFA'], ['#9C5DFF','#CAAEFA']
